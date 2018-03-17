@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-module.exports = downloadPackages
+module.exports = downloadPackages;
 
 function downloadPackages (count, callback) {
 
