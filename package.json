@@ -1,11 +1,21 @@
 {
   "scripts": {
-    "test": "node test.js"
+    "clean": "rm -r ./packages/*/",
+    "test": "npm run clean && node test.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "cheerio": "^1.0.0-rc.2",
+    "download-tarball": "^1.1.0",
+    "request-promise": "^4.2.2"
+  },
   "devDependencies": {
     "get-folder-size": "~1.0.0",
-    "tape": "~4.6.0",
-    "run-series": "^1.1.4"
+    "run-series": "^1.1.4",
+    "tape": "~4.6.0"
   }
 }
