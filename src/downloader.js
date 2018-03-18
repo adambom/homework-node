@@ -11,6 +11,9 @@ import {
 } from './util';
 
 
+const REGISTRY_URL = 'https://registry.npmjs.org';
+
+
 export default class Downloader {
   constructor(url, outputPath, parser, batchSize=100) {
     this._url = url;
@@ -142,7 +145,7 @@ export default class Downloader {
 
   async _getTarballURL(packageName, version='latest') {
     const packageMetadata = await request.get({
-      url: `https://registry.npmjs.org/${packageName}/${version}`,
+      url: `${REGISTRY_URL}/${packageName}/${version}`,
       json: true,
     });
 
