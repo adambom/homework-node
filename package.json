@@ -12,7 +12,8 @@
     "cheerio": "^1.0.0-rc.2",
     "download-tarball": "^1.1.0",
     "lodash": "^4.17.5",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "winston": "^2.4.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",

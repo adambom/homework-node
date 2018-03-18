@@ -4,6 +4,7 @@ import path from 'path';
 import downloadTarball from 'download-tarball';
 import request from 'request-promise';
 
+import log from './logger';
 import {
   asyncForEach,
   iterator,
@@ -102,7 +103,7 @@ export default class Downloader {
 
   _logProgress(progress, delta, count) {
     if (progress < count) {
-      console.log(`Downloading packages ${progress}-${progress + delta - 1} of ${count}`);
+      log.info(`Downloading packages ${progress}-${progress + delta - 1} of ${count}`);
     }
   }
 
@@ -117,7 +118,7 @@ export default class Downloader {
       try {
         await this._downloadPackage(pkg);
       } catch (e) {
-        console.error(`Error downloading package: ${pkg}`, e.message);
+        log.error(`Error downloading package: ${pkg}`, e.message);
       }
     });
   }
