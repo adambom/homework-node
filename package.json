@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "clean": "rm -r ./packages/*/",
+    "clean": "rm -rf ./packages/*/",
     "test": "npm run clean && node test.js"
   },
   "dependencies": {
@@ -11,6 +11,7 @@
     "babel-register": "^6.26.0",
     "cheerio": "^1.0.0-rc.2",
     "download-tarball": "^1.1.0",
+    "lodash": "^4.17.5",
     "request-promise": "^4.2.2"
   },
   "devDependencies": {

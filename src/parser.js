@@ -6,11 +6,10 @@ export default class Parser {
     this.selector = selector;
   }
 
-  parse(html, count) {
+  parse(html) {
     const $ = cheerio.load(html);
 
     return $(this.selector)
-      .slice(0, count)
       .map((i, p) => $(p).text().trim())
       .get();
   }
