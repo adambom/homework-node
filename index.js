@@ -11,11 +11,12 @@ const Parser = require('./src/parser').default;
 
 
 const BASE_URL = 'https://www.npmjs.com/browse/depended';
+const REGISTRY_URL = 'https://registry.npmjs.org';
 const DOWNLOAD_PATH = path.resolve(__dirname, './packages');
 const SELECTOR = '.package-widget .package-details .name';
 
 const parser = new Parser(SELECTOR);
-const downloader = new Downloader(BASE_URL, DOWNLOAD_PATH, parser);
+const downloader = new Downloader(BASE_URL, REGISTRY_URL, DOWNLOAD_PATH, parser);
 
 
 module.exports = downloader.download;

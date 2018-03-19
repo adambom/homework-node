@@ -11,7 +11,6 @@ import {
 } from './util';
 
 
-const REGISTRY_URL = 'https://registry.npmjs.org';
 const SCOPED_PACKAGE_REGEXP = /@/;
 
 
@@ -19,8 +18,9 @@ export default class Downloader {
   _history = new Set();
 
 
-  constructor(url, outputPath, parser, batchSize=100) {
-    this._url = url;
+  constructor(pageUrl, registryUrl, outputPath, parser, batchSize=100) {
+    this._pageUrl = pageUrl;
+    this._registryUrl = registryUrl;
     this._outputPath = outputPath;
     this._parser = parser;
     this._batchSize = batchSize;
@@ -108,7 +108,7 @@ export default class Downloader {
 
 
   _makeUrlForOffset(offset) {
-    return `${this._url}?offset=${offset}`;
+    return `${this._pageUrl}?offset=${offset}`;
   }
 
 
@@ -188,7 +188,7 @@ export default class Downloader {
 
   async _getTarballURL(packageName, version='latest') {
     const packageMetadata = await request.get({
-      url: `${REGISTRY_URL}/${packageName}/${version}`,
+      url: `${this._registryUrl}/${packageName}/${version}`,
       json: true,
     });
 
