@@ -12,6 +12,7 @@ import {
 
 
 const REGISTRY_URL = 'https://registry.npmjs.org';
+const SCOPED_PACKAGE_REGEXP = /@/;
 
 
 export default class Downloader {
@@ -103,7 +104,7 @@ export default class Downloader {
   }
 
 
-  _isNotScopedPackageName = name => !/@/.test(name);
+  _isNotScopedPackageName = name => !SCOPED_PACKAGE_REGEXP.test(name);
 
 
   _makeUrlForOffset(offset) {
