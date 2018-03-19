@@ -2,6 +2,78 @@
 
 > Our Node.js code challenge for engineering applicants
 
+# Adam's Notes
+
+Hey there, just wanted to add a little commentary for anyone who may be reviewing the code. After solving this for N=10, I moved to a strategy that downloads records in batches, so that if N is very large, it's no problem to download everything. I didn't have any trouble downloading N=1000. The `Downloader` class takes a `batchSize` argument, and defaults to `100`. It might be interesting to experiment with that parameter. I seemed to be limited by the network in my testing.
+
+I'm using a couple nifty features in node that are probably worth explaining...
+
+## async/await
+
+My preferred way of handling async stuff in node. It's pretty much the reason that I use node for anything server-side these days. You can write non-blocking i/o code in synchronous style. No need for callbacks or promise semantics.
+
+Here's an example:
+
+```javascript
+async function doSomethinAsynchronously() {
+  let results;
+
+  try {
+    results = await callTheInternet();
+  } catch (e) {
+    console.error('Something went horribly wrong');
+    return;
+  }
+
+  return process(results);
+}
+```
+
+Is equivalent to:
+
+
+```javascript
+function doSomethinAsynchronously() {
+  return callTheInternet()
+    .then(process)
+    .catch(e => {
+      console.log('Something went horribly wrong');
+    });
+}
+```
+
+## Generators and for ... of loops
+
+I've also made liberal use of generators in this project. I like generators as a pattern whenever I'm batching stuff. You'll see code like this in a couple places:
+
+```javascript
+for await (let batch of batches) {
+  // do something with batch
+}
+```
+
+What that code does is iterate over a generator, where the generator produces results asynchronously. If you've got thoughts on this pattern, I'd love to discuss it with you. It's served me well in the past, and when I discovered it I thought it was really cool. This was a good opportunity to leverage this pattern.
+
+## Gotchas
+
+There were a couple gotchas that I discovered as I worked on this problem, and I made some assumptions that allowed me to deal with them. I thought these were worth a mention.
+
+
+### Scoped packages are problematic
+
+If you have a scoped package, e.g. `@angular/core`, the registry url, e.g. `https://registry.npmjs.org/@angular/core/latest` responds with a 401 error. For this reason, I exclude all scoped packages from our results.
+
+
+### Package names can be duplicated
+
+If two versions of a single package are included in the top N results, then we'll get a conflict. Obviously we can only store one version, unless we were to intelligently determine an alternate location on the filesystem in these cases. I opted to disallow duplicates. We ignore any duplicate package names.
+
+
+### Uppercase and lowercase versions of the same package
+
+NPM treats package names with case-sensitivity, but my file system does not. For example, MD5 and md5 are both in the top 1000 depended-upon packages. I opted to make my program case-insensitive, and if two package names are the same when converted to lowercase, I will ignore everything except the first incidence of this package.
+
+
 ## Project
 
 1. Get the 10 [most depended on packages](https://www.npmjs.com/browse/depended) from npm.
