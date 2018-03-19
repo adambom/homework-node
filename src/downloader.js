@@ -15,6 +15,9 @@ const REGISTRY_URL = 'https://registry.npmjs.org';
 
 
 export default class Downloader {
+  _history = new Set();
+
+
   constructor(url, outputPath, parser, batchSize=100) {
     this._url = url;
     this._outputPath = outputPath;
@@ -24,6 +27,8 @@ export default class Downloader {
 
 
   download = async (count, callback) => {
+    this._clearHistory();
+
     try {
       await this._downloadInBatches(count);
     } catch (e) {
@@ -31,6 +36,11 @@ export default class Downloader {
     }
 
     callback();
+  }
+
+
+  _clearHistory() {
+    this._history = new Set();
   }
 
 
@@ -56,7 +66,9 @@ export default class Downloader {
     let batch = [];
 
     for await (let page of this._readAllPages(count)) {
-      for (let pkg of iterator(page)) {
+      let uniquePackagesOnPage = this._dedupePackages(page);
+
+      for (let pkg of iterator(uniquePackagesOnPage)) {
         if (remaining === 0) {
           yield batch;
           return;
@@ -113,6 +125,36 @@ export default class Downloader {
 
   _getPackageNamesFromHTML(html) {
     return this._parser.parse(html);
+  }
+
+  /*
+   * There can be duplicates in the list if there are multiple
+   * versions with the same package name in the most-depended list,
+   * e.g. phantom. We opt to just get the latest version and ignore
+   * future references to duplicate packages. It's also possible
+   * to have upper and lowercase versions of the same package name
+   * , e.g. MD5 and md5, that ultimately cannot be resolved by the
+   * file system. We ignore these as well.
+   */
+  _dedupePackages(packages) {
+    const result = [];
+
+    packages.forEach(pkg => {
+      if (this._hasNotBeenDownloadedAlready(pkg)) {
+        this._rememberPackage(pkg);
+
+        result.push(pkg);
+      }
+    });
+
+    return result;
+  }
+
+  _hasNotBeenDownloadedAlready = pkg => this._history.has(pkg.toLowerCase()) === false;
+
+
+  _rememberPackage = pkg => {
+    this._history.add(pkg.toLowerCase());
   }
 
 
